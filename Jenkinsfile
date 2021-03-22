@@ -5,6 +5,9 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
+                def response = httpRequest "https://www.yahoo.com"
+println('Status: '+response.status)
+println('Response: '+response.content)
             }
         }
         stage('Test') {
