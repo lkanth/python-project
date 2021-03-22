@@ -11,7 +11,7 @@ pipeline {
             steps {
                 echo 'Testing..'
                 script {
-                    def response = httpRequest ignoreSslErrors: true, httpMode: 'GET', url: "https://www.yahoo.com"
+                    def response = httpRequest ignoreSslErrors: true, httpMode: 'GET', url: "https://catvmlmpoc1.ftc.hpeswlab.net/bo"
                     println('Status: '+response.status)
                     println('Response: '+response.content)
                     //def get = new URL("https://httpbin.org/get").openConnection();
