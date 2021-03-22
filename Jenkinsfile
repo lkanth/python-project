@@ -11,7 +11,7 @@ pipeline {
             steps {
                 echo 'Testing..'
                 script {
-                    def response = httpRequest ignoreSslErrors: true, httpMode: 'GET', url: "https://catvmlmpoc1.ftc.hpeswlab.net/bo"
+                    def response = httpRequest ignoreSslErrors: true, httpMode: 'POST', contentType: 'APPLICATION_JSON', requestBody: '{"login":"tenantAdmin","password":"Admin_1234"}', url: "https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711"
                     println('Status: '+response.status)
                     println('Response: '+response.content)
                     //def get = new URL("https://httpbin.org/get").openConnection();
