@@ -25,6 +25,7 @@ pipeline {
                         echo "HTTP response status code: $code"
                         if (code == 200) {
                             def json = new groovy.json.JsonSlurperClassic().parseText(response)
+                            echo response
                             def HCMX_REQUEST_ID = json.actions.find { it._class == "entity_result_list.entity.properties" }.Id
                             echo "HCMX REQUEST ID = $HCMX_REQUEST_ID"
                         }                  
