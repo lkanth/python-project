@@ -29,7 +29,7 @@ pipeline {
                             def HCMX_REQUEST_ID = responseJSON.entity_result_list.entity[0].properties.Id
                             echo "HCMX REQUEST ID = $HCMX_REQUEST_ID"
                             
-                            final String HCMX_GET_REQUEST_STATUS_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Request?filter=Id=\'" + HCMX_REQUEST_ID + "\'\\&layout=PhaseId"
+                            final String HCMX_GET_REQUEST_STATUS_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Request?filter=Id=" + HCMX_REQUEST_ID + "\\&layout=PhaseId"
                             println HCMX_GET_REQUEST_STATUS_URL
                             String reqStatus = "Submitted"
                             int reqCode = 0
