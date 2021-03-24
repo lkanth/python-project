@@ -67,14 +67,14 @@ pipeline
                                 }
                             }
                             
-                            final String HCMX_GET_SUBSCRIPTION_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Subscription?filter=InitiatedByRequest=" + HCMX_REQUEST_ID + "\\&Status='Active'\\&layout=Id"
+                            final String HCMX_GET_SUBSCRIPTION_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Subscription?filter=InitiatedByRequest=" + HCMX_REQUEST_ID + " and Status='Active'\\&layout=Id"
                             println HCMX_GET_SUBSCRIPTION_URL
                             final def (String subResponse, int subRescode)  = sh(script: "curl -s -w '\\n%{response_code}' $HCMX_GET_SUBSCRIPTION_URL -k --header \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
                             if (subRescode == 200) 
                             {
                                     def subResponseJSON = new groovy.json.JsonSlurperClassic().parseText(subResponse)
                                     echo subResponse
-                                    subID = subResponseJSON.entities[0].properties.PhaseId
+                                    subID = subResponseJSON.entities[0].properties.Id
                                     echo "HCMX Subscription ID = $subID"                                                                         
                             }
                         }              
