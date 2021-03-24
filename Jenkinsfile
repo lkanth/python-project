@@ -44,12 +44,13 @@ pipeline {
                                     echo reqResponse
                                     reqStatus = reqResponseJSON.entities[0].properties.PhaseId
                                     echo "HCMX REQUEST status = $reqStatus"
-                                    if ($reqStatus.equalsIgnoreCase("Close"))
+                                    if (reqStatus.equalsIgnoreCase("Close"))
                                     {
                                         break;
                                     }
                                     else
                                     {
+                                        echo "sleep for 10 seconds before checking status again"
                                         sleep(10000)
                                     }                                        
                                 }
