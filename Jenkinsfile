@@ -29,13 +29,14 @@ pipeline {
                             def HCMX_REQUEST_ID = responseJSON.entity_result_list.entity[0].properties.Id
                             echo "HCMX REQUEST ID = $HCMX_REQUEST_ID"
                             
-                            final String HCMX_GET_REQUEST_STATUS_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Request?filter=Id='" + HCMX_REQUEST_ID + "'&layout=PhaseId"
+                            final String HCMX_GET_REQUEST_STATUS_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Request?filter=Id=\'" + HCMX_REQUEST_ID + "\'&layout=PhaseId"
                             println HCMX_GET_REQUEST_STATUS_URL
                             String reqStatus = "Submitted"
                             int reqCode = 0
                             String reqResponse = "Nothing"
                             while (reqStatus != 'Close')
                             {
+                                 println HCMX_GET_REQUEST_STATUS_URL
                                 (reqResponse, reqCode) = sh(script: "curl -s -w '\\n%{response_code}' $HCMX_GET_REQUEST_STATUS_URL -k --header \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
                                 echo "HTTP response status code: $reqCode"
                                 if (reqCode == 200) {
