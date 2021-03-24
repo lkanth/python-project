@@ -26,7 +26,7 @@ pipeline {
                         if (code == 200) {
                             def responseJSON = new groovy.json.JsonSlurperClassic().parseText(response)
                             echo response
-                            def HCMX_REQUEST_ID = responseJSON.entity_result_list.entity.properties.Id
+                            def HCMX_REQUEST_ID = responseJSON.entity_result_list.entity[0].properties.Id
                             echo "HCMX REQUEST ID = $HCMX_REQUEST_ID"
                         }                  
                     }
