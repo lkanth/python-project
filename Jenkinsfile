@@ -51,7 +51,7 @@ pipeline {
                                     else
                                     {
                                         echo "sleep for 10 seconds before checking status again"
-                                        sleep(10000)
+                                        sleep(10)
                                     }                                        
                                 }
                             }
