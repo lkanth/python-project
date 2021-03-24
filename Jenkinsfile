@@ -41,8 +41,7 @@ pipeline
                                     echo subResponse
                                     subID = subResponseJSON.entities[0].properties.Id
                                     echo "HCMX Subscription ID = $subID"                                                                         
-                            }
-                        }              
+                            }                                     
                     }
                 }
             }
