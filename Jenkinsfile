@@ -25,8 +25,9 @@ pipeline
                 echo 'Testing..'
                 script 
 				{
-                    ipAddress = "16.78.123.170"
-					scpCMD = "scp -rp ./build root@$ipAddress:/tmp/"
+                                        def ipAddress = "16.78.123.170"
+					echo $ipAddress
+					def scpCMD = "scp -rp ./build root@$ipAddress:/tmp/"
 					echo $scpCMD
 					sh '$scpCMD'
 					sh 'ssh root@$ipAddress /tmp/build/CreateFile.sh'
