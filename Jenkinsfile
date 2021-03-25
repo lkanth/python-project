@@ -84,6 +84,16 @@ pipeline
 				    {
 					    def svcInstResponseJSON = new groovy.json.JsonSlurperClassic().parseText(svcInstResponse)
 					    echo svcInstResponse
+					    def svcInstTopologyArray = svcInstResponseJSON.topology
+
+					    for(def member : svcInstTopologyArray) 
+					    {
+						     if(member.type.name == 'CI_TYPE_SERVER') 
+						      {
+						      	echo "this is server component"
+						      	break
+						      }
+					      }
 					    
 				    }
 				    
