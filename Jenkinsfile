@@ -23,12 +23,13 @@ pipeline
             steps 
 			{
                 echo 'Testing..'
-				script{
+				script
+				{
 				
-                                        @groovy.transform.Field String ipAddress = "16.78.123.170"
+                    final String ipAddress = "16.78.123.170"
 					println ipAddress
-					@groovy.transform.Field String scpCMD = "scp -rp ./build root@$ipAddress:/tmp/"
-					echo $scpCMD
+					final String scpCMD = "scp -rp ./build root@$ipAddress:/tmp/"
+					echo "scpCMD is $scpCMD"
 					sh '$scpCMD'
 					sh 'ssh root@$ipAddress /tmp/build/CreateFile.sh'
 					sh 'if ssh root@$ipAddress stat /tmp/BuildOutput.txt \\> /dev/null 2\\>\\&1 then echo "File exists" else echo "File does not exist" fi'					
