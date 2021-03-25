@@ -75,7 +75,19 @@ pipeline
                                     def subResponseJSON = new groovy.json.JsonSlurperClassic().parseText(subResponse)
                                     echo subResponse
                                     subID = subResponseJSON.entities[0].properties.Id
-                                    echo "HCMX Subscription ID = $subID"                                                                         
+                                    echo "HCMX Subscription ID = $subID" 
+				    
+				    final String subscriberID="10015"
+				    final String HCMX_CANCEL_SUBSCRIPTION_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ess/subscription/cancelSubscription/" + subscriberID + "/" + subID
+				    println HCMX_CANCEL_SUBSCRIPTION_URL
+				    final def (String subCancelResponse, int subCancelRescode)  = sh(script: "curl -s -w '\\n%{response_code}' -X PUT \"$HCMX_CANCEL_SUBSCRIPTION_URL\" -k --header \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
+				    if (subCancelRescode == 200) 
+				    {
+					    def subCancelResponseJSON = new groovy.json.JsonSlurperClassic().parseText(subCancelResponse)
+					    echo subCancelResponse
+					                                                                         
+				    }
+				    echo subCancelResponse
                             }
                         }              
                     }
