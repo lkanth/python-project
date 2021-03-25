@@ -14,8 +14,9 @@ pipeline
             steps 
 			{
                 echo 'Building..'
+				def workspace = env.WORKSPACE
 				sh 'mkdir build'
-				sh 'cp CreateFile.txt build/CreateFile.txt'
+				sh 'cp $workspace/CreateFile.txt $workspace/build/CreateFile.txt'
             }
         }
         stage('Test') 
