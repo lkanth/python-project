@@ -77,6 +77,17 @@ pipeline
                                     subID = subResponseJSON.entities[0].properties.Id
                                     echo "HCMX Subscription ID = $subID" 
 				    
+				    final String HCMX_GET_SVCINSTANCE_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/cloud-service/getServiceInstance/" + subID
+				    println HCMX_GET_SVCINSTANCE_URL
+				    final def (String svcInstResponse, int svcInstRescode)  = sh(script: "curl -s -w '\\n%{response_code}' \"$HCMX_GET_SVCINSTANCE_URL\" -k --header \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
+				    if (svcInstRescode == 200) 
+				    {
+					    def svcInstResponseJSON = new groovy.json.JsonSlurperClassic().parseText(svcInstResponse)
+					    echo svcInstResponse
+					    
+				    }
+				    
+				    				    
 				    final String subscriberID="10015"
 				    final String HCMX_CANCEL_SUBSCRIPTION_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ess/subscription/cancelSubscription/" + subscriberID + "/" + subID
 				    println HCMX_CANCEL_SUBSCRIPTION_URL
