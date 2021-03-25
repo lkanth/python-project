@@ -108,7 +108,7 @@ pipeline
 										}
 									}
 						
-											
+									/*		
 									final String subscriberID="10015"
 									final String HCMX_CANCEL_SUBSCRIPTION_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ess/subscription/cancelSubscription/" + subscriberID + "/" + subID
 									println HCMX_CANCEL_SUBSCRIPTION_URL
@@ -119,6 +119,7 @@ pipeline
 										echo subCancelResponse					                                                                         
 									}
 									echo subCancelResponse
+									*/
 								}
 							}              
 						}
