@@ -32,9 +32,9 @@ pipeline
 					echo "scpCMD is $scpCMD"
 					sh '$scpCMD'
 					final String runBuildCMD = "ssh root@$ipAddress /tmp/build/CreateFile.sh"
-					sh 'runBuildCMD'
+					sh '$runBuildCMD'
 					final String testCMD = "if ssh root@$ipAddress stat /tmp/BuildOutput.txt \\> /dev/null 2\\>\\&1 then echo \"File exists\" else echo \"File does not exist\" fi"
-					sh 'testCMD'					
+					sh '$testCMD'					
 				}
             }
         }
