@@ -125,12 +125,15 @@ pipeline
 							}              
 						}
 						*/
-						def ipAddress = "16.78.123.170"
-						echo "IP address is $ipAddress"	
-						final String scpCMDOutput = sh(script: "scp -rp ./build root@$ipAddress:/tmp/", returnStdout: true).trim()
-						println scpCMDOutput
-						final String remoteCMDOutput = sh(script: "ssh root@$ipAddress /tmp/build/HelloWorld.sh", returnStdout: true).trim()
-						println remoteCMDOutput
+						sshagent(['HCMXDeployedVMSSHKey']) 
+						{
+    						def ipAddress = "16.78.123.170"
+							echo "IP address is $ipAddress"	
+							final String scpCMDOutput = sh(script: "scp -rp ./build root@$ipAddress:/tmp/", returnStdout: true).trim()
+							println scpCMDOutput
+							final String remoteCMDOutput = sh(script: "ssh root@$ipAddress /tmp/build/HelloWorld.sh", returnStdout: true).trim()
+							println remoteCMDOutput
+						}
 					}
                 }
             }
