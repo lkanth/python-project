@@ -13,7 +13,9 @@ pipeline
 		{
             steps 
 			{
-                echo 'Building..'                
+                echo 'Building..' 
+				sh 'mkdir build'
+				sh 'cp CreateFile.sh build/CreateFile.sh'
             }
         }
         stage('Test') 
