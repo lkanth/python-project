@@ -96,6 +96,7 @@ pipeline
 							{
 								if(propMember.name == 'primary_ip_address') 
 						      		{
+								  echo "IP address is"
 								   echo propMember.propertyValue
 								   break
 								}
