@@ -15,7 +15,7 @@ pipeline
 			{
                 echo 'Building..'
 				sh 'mkdir build'
-				sh cp CreateFile.txt build/CreateFile.txt
+				sh 'cp CreateFile.txt build/CreateFile.txt'
             }
         }
         stage('Test') 
