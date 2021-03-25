@@ -91,6 +91,15 @@ pipeline
 						     if(member.type.name == 'CI_TYPE_SERVER') 
 						      {
 						      	echo "this is server component"
+							def svcInstPropertyArray = member.properties
+							for(def propMember : svcInstPropertyArray) 
+							{
+								if(propMember.name == 'primary_ip_address') 
+						      		{
+								   echo propMember.propertyValue
+								   break
+								}
+							}
 						      	break
 						      }
 					      }
