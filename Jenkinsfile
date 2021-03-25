@@ -127,13 +127,10 @@ pipeline
 						*/
 						def ipAddress = "16.78.123.170"
 						echo "IP address is $ipAddress"	
-						final String scpCMD = "scp -rp ./build root@$ipAddress:/tmp/"
-						echo "scpCMD is $scpCMD"
-						sh '$scpCMD'
-						final String runBuildCMD = "ssh root@$ipAddress /tmp/build/CreateFile.sh"
-						sh '$runBuildCMD'
-						final String testCMD = "if ssh root@$ipAddress stat /tmp/BuildOutput.txt \\> /dev/null 2\\>\\&1 then echo \"File exists\" else echo \"File does not exist\" fi"
-						sh '$testCMD'
+						final String scpCMDOutput = sh(script: "scp -rp ./build root@$ipAddress:/tmp/", returnStdout: true).trim()
+						println scpCMDOutput
+						final String remoteCMDOutput = sh(script: "ssh root@$ipAddress /tmp/build/HelloWorld.sh", returnStdout: true).trim()
+						println remoteCMDOutput
 					}
                 }
             }
