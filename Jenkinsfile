@@ -26,7 +26,7 @@ pipeline
 				script{
 				
                                         @groovy.transform.Field String ipAddress = "16.78.123.170"
-					echo $ipAddress
+					println ipAddress
 					@groovy.transform.Field String scpCMD = "scp -rp ./build root@$ipAddress:/tmp/"
 					echo $scpCMD
 					sh '$scpCMD'
