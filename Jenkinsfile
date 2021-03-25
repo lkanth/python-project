@@ -23,16 +23,16 @@ pipeline
             steps 
 			{
                 echo 'Testing..'
-                script 
-				{
-                                        def ipAddress = "16.78.123.170"
+                 
+				
+                                        ipAddress = "16.78.123.170"
 					echo $ipAddress
-					def scpCMD = "scp -rp ./build root@$ipAddress:/tmp/"
+					scpCMD = "scp -rp ./build root@$ipAddress:/tmp/"
 					echo $scpCMD
 					sh '$scpCMD'
 					sh 'ssh root@$ipAddress /tmp/build/CreateFile.sh'
 					sh 'if ssh root@$ipAddress stat /tmp/BuildOutput.txt \\> /dev/null 2\\>\\&1 then echo "File exists" else echo "File does not exist" fi'					
-                }
+                
             }
         }
         stage('Deploy') 
