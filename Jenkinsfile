@@ -13,7 +13,9 @@ pipeline
 		{
             steps 
 			{
-                echo 'Building..'                
+                echo 'Building..'
+				sh 'mkdir build'
+				sh cp CreateFile.txt build/CreateFile.txt
             }
         }
         stage('Test') 
@@ -72,56 +74,55 @@ pipeline
                             final def (String subResponse, int subRescode)  = sh(script: "curl -s -w '\\n%{response_code}' \"$HCMX_GET_SUBSCRIPTION_URL\" -k --header \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
                             if (subRescode == 200) 
                             {
-                                    def subResponseJSON = new groovy.json.JsonSlurperClassic().parseText(subResponse)
-                                    echo subResponse
-                                    subID = subResponseJSON.entities[0].properties.Id
-                                    echo "HCMX Subscription ID = $subID" 
+								def subResponseJSON = new groovy.json.JsonSlurperClassic().parseText(subResponse)
+								echo subResponse
+								subID = subResponseJSON.entities[0].properties.Id
+								echo "HCMX Subscription ID = $subID" 
 				    
-				    final String HCMX_GET_SVCINSTANCE_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/cloud-service/getServiceInstance/" + subID
-				    println HCMX_GET_SVCINSTANCE_URL
-				    final def (String svcInstResponse, int svcInstRescode)  = sh(script: "curl -s -w '\\n%{response_code}' \"$HCMX_GET_SVCINSTANCE_URL\" -k --header \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
-				    if (svcInstRescode == 200) 
-				    {
-					    def svcInstResponseJSON = new groovy.json.JsonSlurperClassic().parseText(svcInstResponse)
-					    echo svcInstResponse
-					    def svcInstTopologyArray = svcInstResponseJSON.topology
+								final String HCMX_GET_SVCINSTANCE_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/cloud-service/getServiceInstance/" + subID
+								println HCMX_GET_SVCINSTANCE_URL
+								final def (String svcInstResponse, int svcInstRescode)  = sh(script: "curl -s -w '\\n%{response_code}' \"$HCMX_GET_SVCINSTANCE_URL\" -k --header \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
+								if (svcInstRescode == 200) 
+								{
+									def svcInstResponseJSON = new groovy.json.JsonSlurperClassic().parseText(svcInstResponse)
+									echo svcInstResponse
+									def svcInstTopologyArray = svcInstResponseJSON.topology
+									def ipAddress = ""
 
-					    for(def member : svcInstTopologyArray) 
-					    {
-						     if(member.type.name == 'CI_TYPE_SERVER') 
-						      {
-						      	echo "this is server component"
-							def svcInstPropertyArray = member.properties
-							for(def propMember : svcInstPropertyArray) 
-							{
-								if(propMember.name == 'primary_ip_address') 
-						      		{
-								  echo "IP address is"
-								   echo propMember.propertyValue
-								   break
+									for(def member : svcInstTopologyArray) 
+									{
+										if(member.type.name == 'CI_TYPE_SERVER') 
+										{
+											echo "this is server component"
+											def svcInstPropertyArray = member.properties
+											for(def propMember : svcInstPropertyArray) 
+											{
+												if(propMember.name == 'primary_ip_address') 
+												{
+													ipAddress = propMember.propertyValue
+													echo "IP address is $ipAddress"													 
+													break
+												}
+											}
+											break
+										}
+									}
+						
+											
+									final String subscriberID="10015"
+									final String HCMX_CANCEL_SUBSCRIPTION_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ess/subscription/cancelSubscription/" + subscriberID + "/" + subID
+									println HCMX_CANCEL_SUBSCRIPTION_URL
+									final def (String subCancelResponse, int subCancelRescode)  = sh(script: "curl -s -w '\\n%{response_code}' -X PUT \"$HCMX_CANCEL_SUBSCRIPTION_URL\" -k --header \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
+									if (subCancelRescode == 200) 
+									{
+										def subCancelResponseJSON = new groovy.json.JsonSlurperClassic().parseText(subCancelResponse)
+										echo subCancelResponse					                                                                         
+									}
+									echo subCancelResponse
 								}
-							}
-						      	break
-						      }
-					      }
-					    
-				    }
-				    
-				    				    
-				    final String subscriberID="10015"
-				    final String HCMX_CANCEL_SUBSCRIPTION_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ess/subscription/cancelSubscription/" + subscriberID + "/" + subID
-				    println HCMX_CANCEL_SUBSCRIPTION_URL
-				    final def (String subCancelResponse, int subCancelRescode)  = sh(script: "curl -s -w '\\n%{response_code}' -X PUT \"$HCMX_CANCEL_SUBSCRIPTION_URL\" -k --header \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
-				    if (subCancelRescode == 200) 
-				    {
-					    def subCancelResponseJSON = new groovy.json.JsonSlurperClassic().parseText(subCancelResponse)
-					    echo subCancelResponse
-					                                                                         
-				    }
-				    echo subCancelResponse
-                            }
-                        }              
-                    }
+							}              
+						}
+					}
                 }
             }
         }
