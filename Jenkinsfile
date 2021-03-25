@@ -138,6 +138,7 @@ pipeline
 							else
 							{
 								echo "Testing of new build has failed... "
+								error 'Testing of new build has failed...'
 								return
 							}						
 					}
