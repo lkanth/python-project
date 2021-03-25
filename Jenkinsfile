@@ -14,10 +14,9 @@ pipeline
             steps 
 			{
                 echo 'Building..'
-				def workspace = pwd()
-				echo $workspace
+				sh 'pwd'
 				sh 'mkdir build'
-				sh 'cp $workspace/CreateFile.txt $workspace/build/CreateFile.txt'
+				sh 'cp CreateFile.txt build/CreateFile.txt'
             }
         }
         stage('Test') 
