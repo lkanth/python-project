@@ -131,8 +131,15 @@ pipeline
 							final String scpCMDOutput = sh(script: "scp -rp ./build root@$ipAddress:/tmp/", returnStdout: true).trim()
 							println scpCMDOutput
 							final String remoteCMDOutput = sh(script: "ssh root@$ipAddress /tmp/build/HelloWorld.sh", returnStdout: true).trim()
-							println remoteCMDOutput
-						
+							if(remoteCMDOutput == "Hello World1")
+							{
+								echo "Testing of new build was succesful.. Proceeding to deploy stage."
+							}
+							else
+							{
+								echo "Testing of new build has failed... "
+								return
+							}						
 					}
                 }
             }
