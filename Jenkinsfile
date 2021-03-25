@@ -28,7 +28,8 @@ pipeline
 				{
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'HCMXUser', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
 					{
-                        final String HCMX_TENANT_ID = env.HCMX_TENANT_ID
+                        /*
+						final String HCMX_TENANT_ID = env.HCMX_TENANT_ID
                         final String HCMX_SERVER_FQDN = env.HCMX_SERVER_FQDN
                         final String HCMX_AUTH_URL = "https://" + HCMX_SERVER_FQDN + "/auth/authentication-endpoint/authenticate/token?TENANTID=" + HCMX_TENANT_ID
                         final String SMAX_AUTH_TOKEN = sh(script: "curl -d '{\"login\":\"$USERNAME\",\"password\":\"$PASSWORD\"}' -X POST $HCMX_AUTH_URL -k --header \"Content-Type: application/json\"", returnStdout: true).trim()
@@ -108,7 +109,7 @@ pipeline
 											break
 										}
 									}
-						
+									
 											
 									final String subscriberID="10015"
 									final String HCMX_CANCEL_SUBSCRIPTION_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ess/subscription/cancelSubscription/" + subscriberID + "/" + subID
@@ -123,6 +124,16 @@ pipeline
 								}
 							}              
 						}
+						*/
+						def ipAddress = "16.78.123.170"
+						echo "IP address is $ipAddress"	
+						final String scpCMD = "scp -rp ./build root@$ipAddress:/tmp/"
+						echo "scpCMD is $scpCMD"
+						sh '$scpCMD'
+						final String runBuildCMD = "ssh root@$ipAddress /tmp/build/CreateFile.sh"
+						sh '$runBuildCMD'
+						final String testCMD = "if ssh root@$ipAddress stat /tmp/BuildOutput.txt \\> /dev/null 2\\>\\&1 then echo \"File exists\" else echo \"File does not exist\" fi"
+						sh '$testCMD'
 					}
                 }
             }
