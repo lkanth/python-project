@@ -15,7 +15,8 @@ pipeline
 			{
                 echo 'Building..'
 				sh 'mkdir build'
-				sh 'cp CreateFile.sh build/CreateFile.sh'
+				sh 'cp HelloWorld.sh build/HelloWorld.sh'
+				sh 'chmod 555 build/HelloWorld.sh'
             }
         }
         stage('Test') 
