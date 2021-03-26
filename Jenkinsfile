@@ -110,9 +110,9 @@ pipeline
 									}
 									
 									echo "IP address is $ipAddress"	
-									final String scpCMDOutput = sh(script: "scp -rp ./build root@$ipAddress:/tmp/", returnStdout: true).trim()
+									final String scpCMDOutput = sh(script: "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -rp ./build root@$ipAddress:/tmp/", returnStdout: true).trim()
 									println scpCMDOutput
-									final String remoteCMDOutput = sh(script: "ssh root@$ipAddress /tmp/build/HelloWorld.sh", returnStdout: true).trim()
+									final String remoteCMDOutput = sh(script: "ssh -o StrictHostKeyChecking=no root@$ipAddress /tmp/build/HelloWorld.sh", returnStdout: true).trim()
 									
 									sleep(60)
 									
