@@ -87,24 +87,27 @@ pipeline
 								def HCMX_REQUEST_ID = depVMResponseJSON.entity_result_list.entity[0].properties.Id
 								echo "HCMX Request ID to deploy a new test server VM is $HCMX_REQUEST_ID"
 								
+								// Build HCMX Get request status URL
 								final String HCMX_GET_REQUEST_STATUS_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Request?filter=Id=" + HCMX_REQUEST_ID + "\\&layout=PhaseId"
-								println HCMX_GET_REQUEST_STATUS_URL
-								String reqStatus = "Submitted"
+								String reqStatus = ""
 								int reqCode = 0
-								String reqResponse = "Nothing"
+								String reqResponse = ""
+								
+								// Loop until Request status changes to Close. Once it is in closed status VM is deployed and ready for testing.
 								while (reqStatus != 'Close')
 								{
-									println HCMX_GET_REQUEST_STATUS_URL
+									// Submit a REST API call to HCMX to get status of VM deployment request
 									(reqResponse, reqCode) = sh(script: "curl -s -w '\\n%{response_code}' $HCMX_GET_REQUEST_STATUS_URL -k --header \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
 									echo "HTTP response status code: $reqCode"
+									
 									if (reqCode == 200) 
 									{
 										def reqResponseJSON = new groovy.json.JsonSlurperClassic().parseText(reqResponse)
-										echo reqResponse
 										reqStatus = reqResponseJSON.entities[0].properties.PhaseId
 										echo "HCMX REQUEST status = $reqStatus"
 										if (reqStatus.equalsIgnoreCase("Close"))
 										{
+											// If request for VM deployment has moved to Close phase, then VM has been deployed successfully.
 											break;
 										}
 										else
@@ -115,26 +118,29 @@ pipeline
 									}
 								}
 								
+								// Build HCMX Get subscription URL using the request ID that was obtained in earlier steps.
 								final String HCMX_GET_SUBSCRIPTION_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Subscription?filter=(InitiatedByRequest=%27" + HCMX_REQUEST_ID + "%27%20and%20Status=%27Active%27)&layout=Id"
-								println HCMX_GET_SUBSCRIPTION_URL
+								
+								// Submit a REST API call to HCMX to get subscription ID
 								final def (String subResponse, int subRescode)  = sh(script: "curl -s -w '\\n%{response_code}' \"$HCMX_GET_SUBSCRIPTION_URL\" -k --header \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
 								if (subRescode == 200) 
 								{
-									def subResponseJSON = new groovy.json.JsonSlurperClassic().parseText(subResponse)
-									echo subResponse
+									def subResponseJSON = new groovy.json.JsonSlurperClassic().parseText(subResponse)									
 									subID = subResponseJSON.entities[0].properties.Id
 									echo "HCMX Subscription ID = $subID" 
 						
+									// Prepare HCMX Get service instance URL using the subscription ID that was obtained in earlier steps.
 									final String HCMX_GET_SVCINSTANCE_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/cloud-service/getServiceInstance/" + subID
-									println HCMX_GET_SVCINSTANCE_URL
+									
+									// Submit a REST API call to HCMX to get a list of service instances associated with the subscription
 									final def (String svcInstResponse, int svcInstRescode)  = sh(script: "curl -s -w '\\n%{response_code}' \"$HCMX_GET_SVCINSTANCE_URL\" -k --header \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
 									if (svcInstRescode == 200) 
 									{
 										def svcInstResponseJSON = new groovy.json.JsonSlurperClassic().parseText(svcInstResponse)
-										echo svcInstResponse
 										def svcInstTopologyArray = svcInstResponseJSON.topology
 										def ipAddress = ""
-
+										
+										// Loop through service instances. Retrieve IP address property value for the service instance with type = CI_TYPE_SERVER
 										for(def member : svcInstTopologyArray) 
 										{
 											if(member.type.name == 'CI_TYPE_SERVER') 
@@ -154,24 +160,31 @@ pipeline
 											}
 										}
 										
-										echo "IP address is $ipAddress"	
+										echo "HCMX: IP address of deployed virtual machine is $ipAddress"	
+										
+										// Copy build to the deployed virtual machine for testing.
 										final String scpCMDOutput = sh(script: "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -rp ./build root@$ipAddress:/tmp/", returnStdout: true).trim()
-										println scpCMDOutput
+										
+										// Test build on the deployed virtual machine.
 										final String remoteCMDOutput = sh(script: "ssh -o StrictHostKeyChecking=no root@$ipAddress /tmp/build/HelloWorld.sh", returnStdout: true).trim()
 										
-										sleep(60)
+										// For demo and testing only. Comment out this line in production environment.
+										sleep(120)
 										
-										
+										// Cancel subscription to delete deployed virtual machines. This frees up resources on cloud provider and reduces cloud spend.
+										// Prepare HCMX cancel subscription URL using the subscription ID and the person ID that were obtained in earlier steps.
 										final String HCMX_CANCEL_SUBSCRIPTION_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ess/subscription/cancelSubscription/" + HCMX_PERSON_ID + "/" + subID
-										println HCMX_CANCEL_SUBSCRIPTION_URL
+										
+										// Submit a REST API call to HCMX to cancel subscription, thereby delete deployed VM
 										final def (String subCancelResponse, int subCancelRescode)  = sh(script: "curl -s -w '\\n%{response_code}' -X PUT \"$HCMX_CANCEL_SUBSCRIPTION_URL\" -k --header \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
+										
 										if (subCancelRescode == 200) 
 										{
-											def subCancelResponseJSON = new groovy.json.JsonSlurperClassic().parseText(subCancelResponse)
-											echo subCancelResponse					                                                                         
+											def subCancelResponseJSON = new groovy.json.JsonSlurperClassic().parseText(subCancelResponse)													                                                                         
 										}
 										echo subCancelResponse
-																									
+										
+										// Validate test results from build execution results on remotely deployed virtual machine
 										if(remoteCMDOutput == "Hello World")
 										{
 											echo "Testing of new build was succesful.. Proceeding to deploy stage."
@@ -182,8 +195,28 @@ pipeline
 											error 'Testing of new build has failed...'
 										}								
 									}
-								}              
+									else
+									{
+										echo "Failed to get service instances from HCMX"
+										error 'Failed to get service instances from HCMX'
+									}
+								} 
+								else
+								{
+									echo "Failed to get subscription ID from HCMX"
+									error 'Failed to get subscription ID from HCMX'
+								}
 							}
+							else
+							{
+								echo "Request to deploy new virtual machines has failed"
+								error 'Request to deploy new virtual machines has failed'
+							}
+						}
+						else
+						{
+							echo "Unable to get user ID for the user $USERNAME to submit REST API calls to HCMX... "
+							error 'Unable to get user ID for the user $USERNAME to submit REST API calls to HCMX... '
 						}
 					}
                 }
