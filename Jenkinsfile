@@ -84,7 +84,7 @@ pipeline
 							{
 								def depVMResponseJSON = new groovy.json.JsonSlurperClassic().parseText(depVMResponse)
 								echo depVMResponse
-								def HCMX_REQUEST_ID = responseJSON.entity_result_list.entity[0].properties.Id
+								def HCMX_REQUEST_ID = depVMResponseJSON.entity_result_list.entity[0].properties.Id
 								echo "HCMX Request ID to deploy a new test server VM is $HCMX_REQUEST_ID"
 								
 								final String HCMX_GET_REQUEST_STATUS_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Request?filter=Id=" + HCMX_REQUEST_ID + "\\&layout=PhaseId"
