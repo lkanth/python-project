@@ -68,7 +68,7 @@ pipeline
 						{
 							def personIDResponseJSON = new groovy.json.JsonSlurperClassic().parseText(personIDResponse)
 							echo personIDResponse
-							def HCMX_PERSON_ID = responseJSON.entities[0].properties.Id
+							def HCMX_PERSON_ID = personIDResponseJSON.entities[0].properties.Id
 							echo "HCMX Requested for person ID is $HCMX_PERSON_ID"
 						
                         
