@@ -83,8 +83,7 @@ pipeline
 							
 							if (depVMResponseCode == 200) 
 							{
-								def depVMResponseJSON = new groovy.json.JsonSlurperClassic().parseText(depVMResponse)
-								echo depVMResponse
+								def depVMResponseJSON = new groovy.json.JsonSlurperClassic().parseText(depVMResponse)								
 								def HCMX_REQUEST_ID = depVMResponseJSON.entity_result_list.entity[0].properties.Id
 								echo "HCMX Request ID to deploy a new test server VM is $HCMX_REQUEST_ID"
 								
@@ -146,14 +145,12 @@ pipeline
 										{
 											if(member.type.name == 'CI_TYPE_SERVER') 
 											{
-												echo "this is server component"
 												def svcInstPropertyArray = member.properties
 												for(def propMember : svcInstPropertyArray) 
 												{
 													if(propMember.name == 'primary_ip_address') 
 													{
-														ipAddress = propMember.propertyValue
-														echo "IP address is $ipAddress"													 
+														ipAddress = propMember.propertyValue																										 
 														break
 													}
 												}
@@ -164,9 +161,11 @@ pipeline
 										echo "HCMX: IP address of deployed virtual machine is $ipAddress"	
 										
 										// Copy build to the deployed virtual machine for testing.
+										echo "Copying build to the deployed VM for testing"
 										final String scpCMDOutput = sh(script: "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -rp ./build root@$ipAddress:/tmp/", returnStdout: true).trim()
 										
 										// Test build on the deployed virtual machine.
+										echo "Testing build on the deployed VM"
 										final String remoteCMDOutput = sh(script: "ssh -o StrictHostKeyChecking=no root@$ipAddress /tmp/build/HelloWorld.sh", returnStdout: true).trim()
 										
 										// For demo and testing only. Comment out this line in production environment.
@@ -179,11 +178,17 @@ pipeline
 										// Submit a REST API call to HCMX to cancel subscription, thereby delete deployed VM
 										final def (String subCancelResponse, int subCancelRescode)  = sh(script: "set +x;curl -s -w '\\n%{response_code}' -X PUT \"$HCMX_CANCEL_SUBSCRIPTION_URL\" -k -H \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\";set -x", returnStdout: true).trim().tokenize("\n")
 										
+										
 										if (subCancelRescode == 200) 
 										{
-											def subCancelResponseJSON = new groovy.json.JsonSlurperClassic().parseText(subCancelResponse)													                                                                         
+											echo "HCMX Subscription canceled successfully"
 										}
-										echo subCancelResponse
+										else
+										{
+											echo "HCMX subscription cancellation failed. Removal of deployed VM has failed."
+											echo "HCMX Subscription cancellation response: $subCancelResponse"
+										}
+										
 										
 										// Validate test results from build execution results on remotely deployed virtual machine
 										if(remoteCMDOutput == "Hello World")
