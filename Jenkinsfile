@@ -73,7 +73,7 @@ pipeline
 							echo "HCMX: Get person ID"
 							// Build HCMX Get Person ID URL
 							final String HCMX_GET_PERSON_ID_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Person?filter=(Upn=%27" + USERNAME + "%27)&layout=Id"
-							final String HCMX_GET_PERSON_ID_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Person?filter=(Upn=%27"
+							//final String HCMX_GET_PERSON_ID_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Person?filter=(Upn=%27"
 							final String Part_URL = "%27)&layout=Id"
 							println HCMX_GET_PERSON_ID_URL
 							
