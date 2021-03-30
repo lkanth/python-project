@@ -44,7 +44,7 @@ pipeline
 				*/
 				
 				echo '-----------------------TESTING-----------------------'
-				sh('curl -X POST $HCMX_AUTH_URL -k -H "Content-Type: application/json" -d '{"login":"$EXAMPLE_CREDS_USR","password":"$EXAMPLE_CREDS_PSW"}')
+				//sh('curl -X POST $HCMX_AUTH_URL -k -H "Content-Type: application/json" -d '{"login":"$EXAMPLE_CREDS_USR","password":"$EXAMPLE_CREDS_PSW"}')
 				{
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'HCMXUser', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
 					{
@@ -62,7 +62,7 @@ pipeline
 						
 						// Submit a REST API call to HCMX to get SMAX_AUTH_TOKEN
 						
-                        final def (String SMAX_AUTH_TOKEN, int getTokenResCode) = sh(script: "set +x;curl -s -w '\\n%{response_code}' -X POST $HCMX_AUTH_URL -k -H \"Content-Type: application/json\" -d '{\"login\":\"$USERNAME\",\"password\":\"$PASSWORD\"}' ", returnStdout: true).trim().tokenize("\n")
+                        final def (String SMAX_AUTH_TOKEN, int getTokenResCode) = sh(script: 'set +x;curl -s -w '\\n%{response_code}' -X POST $HCMX_AUTH_URL -k -H \"Content-Type: application/json\" -d '{\"login\":\"$USERNAME\",\"password\":\"$PASSWORD\"}' ', returnStdout: true).trim().tokenize("\n")
 						
 						if (getTokenResCode == 200)
 						{
