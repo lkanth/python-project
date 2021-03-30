@@ -49,8 +49,8 @@ pipeline
 				//sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login":"tenantAdmin","password":"Admin_1234"}\'')
 				//sh("""curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H \"Content-Type: application/json\" -d '{\"login\":\"$EXAMPLE_CREDS_USR\",\"password\":\"$EXAMPLE_CREDS_PSW\"}'""")
 				//sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login":"$EXAMPLE_CREDS_USR","password":"$EXAMPLE_CREDS_PSW"}\'')
-				sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login": "'"${​​​​​EXAMPLE_CREDS_USR}​​​​​"'", "password": "'"$EXAMPLE_CREDS_PSW"'"}\'')
-
+				sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d {"login": "'"${​​​​​EXAMPLE_CREDS_USR}​​​​​"'", "password": "'"$EXAMPLE_CREDS_PSW"'"}')
+                               
     
 				//'{​​​​​ "passwordCredentials": {​​​​​ "username": "'"${​​​​​USER}​​​​​"'", "password": "'"${​​​​​PASSWORD}​​​​​"'" }​​​​​, "tenantName": "PROVIDER" }​​​​​'
 
@@ -65,7 +65,7 @@ pipeline
 						final String HCMX_TENANT_ID = env.HCMX_TENANT_ID
                         final String HCMX_SERVER_FQDN = env.HCMX_SERVER_FQDN
 						
-						
+						error 'Failed to get SMAX_AUTH_TOKEN'
 						echo "HCMX: Get SMAX Auth Token"
 						
 						// HCMX REST APIs require SMAX AUTH TOKEN and TENANT ID to perform any POST, PUT and GET operations.
@@ -80,7 +80,7 @@ pipeline
 						//final String curlCommand ="curl -X POST $HCMX_AUTH_URL"
 						//sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login":"$USERNAME","password":"$PASSWORD"}\'')
 						
-						error 'Failed to get SMAX_AUTH_TOKEN'
+						
 						if (getTokenResCode == 200)
 						{
 						
