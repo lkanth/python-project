@@ -44,7 +44,7 @@ pipeline
 				*/
 				
 				echo '-----------------------TESTING-----------------------'
-				sh('curl -X POST $HCMX_AUTH_URL -k -H "Content-Type: application/json" -d '{"login":"$EXAMPLE_CREDS_USR","password":"$EXAMPLE_CREDS_PSW"}')
+				sh('curl -X POST $HCMX_AUTH_URL -k -H "Content-Type: application/json" -d '\{"login":"$EXAMPLE_CREDS_USR","password":"$EXAMPLE_CREDS_PSW"\}')
 				script 
 				{
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'HCMXUser', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
