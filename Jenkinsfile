@@ -45,13 +45,13 @@ pipeline
 				*/
 				
 				echo '-----------------------TESTING-----------------------'				
-				/*
+				/*******************
 				sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login": "\'"$EXAMPLE_CREDS_USR"\'", "password": "\'"$EXAMPLE_CREDS_PSW"\'"}\'')
 				//sh("curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H \"Content-Type: application/json\" -d '{\"login\": \"$EXAMPLE_CREDS_USR\", \"password\": \"$EXAMPLE_CREDS_PSW\"}'")
 				sh('echo "This is start"')
 				sh('echo "\'"$EXAMPLE_CREDS_USR $EXAMPLE_CREDS_PSW"\'"')
 				sh('echo "This is end"')
-				*/
+				*******************/
 				script 
 				{
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'HCMXUser', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
@@ -77,7 +77,7 @@ pipeline
 						echo "HCMX: Get SMAX Auth Token -1 ${HCMX_AUTH_URL}"
 						String foo='curl -k -X POST "\'"${HCMX_AUTH_URL}"\'" -H "Content-Type: application/json" -d \'{"login": "\'"$USERNAME"\'", "password": "\'"$PASSWORD"\'"}\''
 						echo "foo=$foo"
-						final def (String SMAX_AUTH_TOKEN, int getTokenResCode) = sh(script: 'curl -s -w \'\\n%{response_code}\' -X POST """${HCMX_AUTH_URL}""" -k -H "Content-Type: application/json" -d \'{"login":"\'"$USERNAME"\'","password":"\'"$PASSWORD"\'"}\' ', returnStdout: true).trim().tokenize("\n")
+						final def (String SMAX_AUTH_TOKEN, int getTokenResCode) = sh(script: 'curl -s -w \'\\n%{response_code}\' -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -k -H "Content-Type: application/json" -d \'{"login":"\'"$USERNAME"\'","password":"\'"$PASSWORD"\'"}\' ', returnStdout: true).trim().tokenize("\n")
 						
 						sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login": "\'"$USERNAME"\'", "password": "\'"$PASSWORD"\'"}\'')
 						
