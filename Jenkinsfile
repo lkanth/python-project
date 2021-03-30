@@ -67,7 +67,8 @@ pipeline
 						
                         //final def (String SMAX_AUTH_TOKEN, int getTokenResCode) = sh(script: "set +x;curl -s -w '\\n%{response_code}' -X POST $HCMX_AUTH_URL -k -H \"Content-Type: application/json\" -d '{\"login\":\"$USERNAME\",\"password\":\"$PASSWORD\"}' ", returnStdout: true).trim().tokenize("\n")
 						
-						sh('curl -X POST $HCMX_AUTH_URL -k -H "Content-Type: application/json" -d \'{"login":"$USERNAME","password":"$PASSWORD"}\'')
+						//sh('curl -X POST'"$HCMX_AUTH_URL" -k -H "Content-Type: application/json" -d \'{"login":"$USERNAME","password":"$PASSWORD"}\'')
+						sh('curl -X POST '"$HCMX_AUTH_URL")
 						
 						error 'Failed to get SMAX_AUTH_TOKEN'
 						if (getTokenResCode == 200)
