@@ -229,6 +229,11 @@ pipeline
 								error 'Unable to get user ID for the user $USERNAME to submit REST API calls to HCMX... '
 							}
 						}
+						else
+						{
+							echo "Failed to get SMAX_AUTH_TOKEN"
+							error 'Failed to get SMAX_AUTH_TOKEN'
+						}
 					}
                 }
             }
