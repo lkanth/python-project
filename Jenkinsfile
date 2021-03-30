@@ -9,7 +9,8 @@ pipeline
 		// HCMX tenant's ID that has DND capability. DND capability is required to provision and manage VMs.
 		// HCMX will be used to provision VMs on which testing of the new build will be performed.
 		// After testing is complete, provisioned VMs are deleted so that expenses on public cloud is reduced and resource usage on private cloud is reduced.
-		HCMX_TENANT_ID = '616409711'		
+		HCMX_TENANT_ID = '616409711'
+		EXAMPLE_CREDS = credentials('HCMXUser')
     }
 
     stages 
@@ -43,7 +44,7 @@ pipeline
 				*/
 				
 				echo '-----------------------TESTING-----------------------'
-                script 
+				sh('curl -X POST $HCMX_AUTH_URL -k -H \"Content-Type: application/json\" -d '{\"login\":\"$EXAMPLE_CREDS_USR\",\"password\":\"$EXAMPLE_CREDS_PSW\"}')
 				{
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'HCMXUser', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
 					{
@@ -106,7 +107,7 @@ pipeline
 									{
 										// Submit a REST API call to HCMX to get status of VM deployment request
 										echo "HCMX: Get request status until it is Closed"
-										(reqResponse, reqCode) = sh(script: "curl -s -w '\\n%{response_code}' $HCMX_GET_REQUEST_STATUS_URL -k -H \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
+										(reqResponse, reqCode) = sh(script: "set +x;curl -s -w '\\n%{response_code}' $HCMX_GET_REQUEST_STATUS_URL -k -H \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
 																				
 										if (reqCode == 200) 
 										{
