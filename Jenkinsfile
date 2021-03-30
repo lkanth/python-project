@@ -80,18 +80,15 @@ pipeline
 						
 						//sh(script: 'echo """$HCMX_AUTH_URL""" ') + echo ''
 						//sh(script: 'echo "${HCMX_AUTH_URL}"') + echo ''
+						//sh(script:' echo ''' + HCMX_AUTH_URL + ''' ') Fails
 						//sh(''' echo ''' + HCMX_AUTH_URL + ''' ''') Works
 						//sh(script:''' echo ''' + HCMX_AUTH_URL + ''' ''') Works
-						sh(script:' echo ''' + HCMX_AUTH_URL + ''' ')
+						
 						
 						//sh(script: "echo ${HCMX_AUTH_URL}") echo 'https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711'
 						
-						
-						
-						
-						
-						
-						//final def (String SMAX_AUTH_TOKEN, int getTokenResCode) = sh(script: 'curl -s -w \'\\n%{response_code}\' -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -k -H "Content-Type: application/json" -d \'{"login":"\'"$USERNAME"\'","password":"\'"$PASSWORD"\'"}\' ', returnStdout: true).trim().tokenize("\n")
+												
+						final def (String SMAX_AUTH_TOKEN, int getTokenResCode) = sh(script: '''curl -s -w \'\\n%{response_code}\' -X POST ''' + HCMX_AUTH_URL + ''' -k -H "Content-Type: application/json" -d \'{"login":"\'"$USERNAME"\'","password":"\'"$PASSWORD"\'"}\' ''', returnStdout: true).trim().tokenize("\n")
 						
 						//sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login": "\'"$USERNAME"\'", "password": "\'"$PASSWORD"\'"}\'')
 						
