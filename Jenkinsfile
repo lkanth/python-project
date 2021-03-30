@@ -69,7 +69,7 @@ pipeline
 						
 						//sh('curl -X POST'"$HCMX_AUTH_URL" -k -H "Content-Type: application/json" -d \'{"login":"$USERNAME","password":"$PASSWORD"}\'')
 						final String curlCommand ="curl -X POST $HCMX_AUTH_URL"
-						sh("curlCommand")
+						sh("$curlCommand")
 						
 						error 'Failed to get SMAX_AUTH_TOKEN'
 						if (getTokenResCode == 200)
