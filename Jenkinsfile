@@ -44,7 +44,9 @@ pipeline
 				*/
 				
 				echo '-----------------------TESTING-----------------------'
-				sh('curl -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -k -H "Content-Type: application/json" -u $EXAMPLE_CREDS_USR:$EXAMPLE_CREDS_PSW')
+				echo $EXAMPLE_CREDS_USR
+				echo $EXAMPLE_CREDS_PSW
+				sh('curl -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -k -H "Content-Type: application/json" -d {"login":"tenantAdmin","password":"Admin_1234"}')
 				script 
 				{
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'HCMXUser', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
@@ -56,6 +58,7 @@ pipeline
 						final String HCMX_TENANT_ID = env.HCMX_TENANT_ID
                         final String HCMX_SERVER_FQDN = env.HCMX_SERVER_FQDN
 						
+						error 'Failed to get SMAX_AUTH_TOKEN'
 						echo "HCMX: Get SMAX Auth Token"
 						// HCMX REST APIs require SMAX AUTH TOKEN and TENANT ID to perform any POST, PUT and GET operations.
 						// Build HCMX Authentication Token URL
