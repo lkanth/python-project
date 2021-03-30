@@ -44,42 +44,29 @@ pipeline
 					After testing is complete, the new VM is deleted through HCMX to release resource usage on the cloud provider.
 				*/
 				
-				echo '-----------------------TESTING-----------------------'
-				//sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login":"$EXAMPLE_CREDS_USR","password":"$EXAMPLE_CREDS_PSW"}\'')
-				//sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login":"tenantAdmin","password":"Admin_1234"}\'')
-				//sh("""curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H \"Content-Type: application/json\" -d '{\"login\":\"$EXAMPLE_CREDS_USR\",\"password\":\"$EXAMPLE_CREDS_PSW\"}'""")
-				//sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login":"$EXAMPLE_CREDS_USR","password":"$EXAMPLE_CREDS_PSW"}\'')
-				sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d {"login": "'"${​​​​​EXAMPLE_CREDS_USR}​​​​​"'", "password": "'"$EXAMPLE_CREDS_PSW"'"}')
-                               
-    
-				//'{​​​​​ "passwordCredentials": {​​​​​ "username": "'"${​​​​​USER}​​​​​"'", "password": "'"${​​​​​PASSWORD}​​​​​"'" }​​​​​, "tenantName": "PROVIDER" }​​​​​'
-
+				echo '-----------------------TESTING-----------------------'				
+				sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d {"login": "'"$EXAMPLE_CREDS_USR"'", "password": "'"$EXAMPLE_CREDS_PSW"'"}')
 				script 
 				{
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'HCMXUser', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
 					{
-                        final int HCMX_REQ_STATUS_CHK_INTERVAL_SECONDS = 30
+                        error 'Failed to get SMAX_AUTH_TOKEN'
+						final int HCMX_REQ_STATUS_CHK_INTERVAL_SECONDS = 30
 						final int HCMX_SUB_CANCEL_DELAY_SECONDS = 1
 						
 						
 						final String HCMX_TENANT_ID = env.HCMX_TENANT_ID
                         final String HCMX_SERVER_FQDN = env.HCMX_SERVER_FQDN
 						
-						error 'Failed to get SMAX_AUTH_TOKEN'
-						echo "HCMX: Get SMAX Auth Token"
 						
+						echo "HCMX: Get SMAX Auth Token"
 						// HCMX REST APIs require SMAX AUTH TOKEN and TENANT ID to perform any POST, PUT and GET operations.
 						// Build HCMX Authentication Token URL
                         final String HCMX_AUTH_URL = "https://" + HCMX_SERVER_FQDN + "/auth/authentication-endpoint/authenticate/token?TENANTID=" + HCMX_TENANT_ID
 						
 						// Submit a REST API call to HCMX to get SMAX_AUTH_TOKEN
 						
-                        //final def (String SMAX_AUTH_TOKEN, int getTokenResCode) = sh(script: "set +x;curl -s -w '\\n%{response_code}' -X POST $HCMX_AUTH_URL -k -H \"Content-Type: application/json\" -d '{\"login\":\"$USERNAME\",\"password\":\"$PASSWORD\"}' ", returnStdout: true).trim().tokenize("\n")
-						
-						//sh('curl -X POST'"$HCMX_AUTH_URL" -k -H "Content-Type: application/json" -d \'{"login":"$USERNAME","password":"$PASSWORD"}\'')
-						//final String curlCommand ="curl -X POST $HCMX_AUTH_URL"
-						//sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login":"$USERNAME","password":"$PASSWORD"}\'')
-						
+                        final def (String SMAX_AUTH_TOKEN, int getTokenResCode) = sh(script: "set +x;curl -s -w '\\n%{response_code}' -X POST $HCMX_AUTH_URL -k -H \"Content-Type: application/json\" -d '{\"login\":\"$USERNAME\",\"password\":\"$PASSWORD\"}' ", returnStdout: true).trim().tokenize("\n")
 						
 						if (getTokenResCode == 200)
 						{
