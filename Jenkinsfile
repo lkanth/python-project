@@ -10,7 +10,6 @@ pipeline
 		// HCMX will be used to provision VMs on which testing of the new build will be performed.
 		// After testing is complete, provisioned VMs are deleted so that expenses on public cloud is reduced and resource usage on private cloud is reduced.
 		HCMX_TENANT_ID = '616409711'
-		EXAMPLE_CREDS = credentials('HCMXUser')
 		
     }
 
@@ -45,19 +44,12 @@ pipeline
 				*/
 				
 				echo '-----------------------TESTING-----------------------'				
-				/*******************
-				sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login": "\'"$EXAMPLE_CREDS_USR"\'", "password": "\'"$EXAMPLE_CREDS_PSW"\'"}\'')
-				//sh("curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H \"Content-Type: application/json\" -d '{\"login\": \"$EXAMPLE_CREDS_USR\", \"password\": \"$EXAMPLE_CREDS_PSW\"}'")
-				sh('echo "This is start"')
-				sh('echo "\'"$EXAMPLE_CREDS_USR $EXAMPLE_CREDS_PSW"\'"')
-				sh('echo "This is end"')
-				*******************/
+				
 				script 
 				{
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'HCMXUser', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
 					{
-                        
-						final int HCMX_REQ_STATUS_CHK_INTERVAL_SECONDS = 30
+                        final int HCMX_REQ_STATUS_CHK_INTERVAL_SECONDS = 30
 						final int HCMX_SUB_CANCEL_DELAY_SECONDS = 1
 						
 						
@@ -69,31 +61,10 @@ pipeline
 						// HCMX REST APIs require SMAX AUTH TOKEN and TENANT ID to perform any POST, PUT and GET operations.
 						// Build HCMX Authentication Token URL
                         final String HCMX_AUTH_URL = "https://" + HCMX_SERVER_FQDN + "/auth/authentication-endpoint/authenticate/token?TENANTID=" + HCMX_TENANT_ID
-						echo "HCMX: Get SMAX Auth Token-0"
+						
 						// Submit a REST API call to HCMX to get SMAX_AUTH_TOKEN
 						
-                        //final def (String SMAX_AUTH_TOKEN, int getTokenResCode) = sh(script: "set +x;curl -s -w '\\n%{response_code}' -X POST $HCMX_AUTH_URL -k -H \"Content-Type: application/json\" -d '{\"login\":\"$USERNAME\",\"password\":\"$PASSWORD\"}' ", returnStdout: true).trim().tokenize("\n")
-						
-						echo "HCMX: Get SMAX Auth Token -1 ${HCMX_AUTH_URL}"
-						//String foo='curl -k -X POST "\'"${HCMX_AUTH_URL}"\'" -H "Content-Type: application/json" -d \'{"login": "\'"$USERNAME"\'", "password": "\'"$PASSWORD"\'"}\''
-						echo "Echo URL"
-						
-						//sh(script: 'echo """$HCMX_AUTH_URL""" ') + echo ''
-						//sh(script: 'echo "${HCMX_AUTH_URL}"') + echo ''
-						//sh(script:' echo ''' + HCMX_AUTH_URL + ''' ') Fails
-						//sh(''' echo ''' + HCMX_AUTH_URL + ''' ''') Works
-						//sh(script:''' echo ''' + HCMX_AUTH_URL + ''' ''') Works
-						
-						
-						//sh(script: "echo ${HCMX_AUTH_URL}") echo 'https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711'
-						
-												
-						final def (String SMAX_AUTH_TOKEN, int getTokenResCode) = sh(script: '''curl -s -w \'\\n%{response_code}\' -X POST ''' + HCMX_AUTH_URL + ''' -k -H "Content-Type: application/json" -d \'{"login":"\'"$USERNAME"\'","password":"\'"$PASSWORD"\'"}\' ''', returnStdout: true).trim().tokenize("\n")
-						
-						//sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login": "\'"$USERNAME"\'", "password": "\'"$PASSWORD"\'"}\'')
-						
-						echo "SMAX auth token is $SMAX_AUTH_TOKEN Response code is $getTokenResCode"
-						error 'Failed to get SMAX_AUTH_TOKEN'
+                        final def (String SMAX_AUTH_TOKEN, int getTokenResCode) = sh(script: '''curl -s -w \'\\n%{response_code}\' -X POST ''' + HCMX_AUTH_URL + ''' -k -H "Content-Type: application/json" -d \'{"login":"\'"$USERNAME"\'","password":"\'"$PASSWORD"\'"}\' ''', returnStdout: true).trim().tokenize("\n")
 						
 						if (getTokenResCode == 200)
 						{
