@@ -9,7 +9,8 @@ pipeline
 		// HCMX tenant's ID that has DND capability. DND capability is required to provision and manage VMs.
 		// HCMX will be used to provision VMs on which testing of the new build will be performed.
 		// After testing is complete, provisioned VMs are deleted so that expenses on public cloud is reduced and resource usage on private cloud is reduced.
-		HCMX_TENANT_ID = '616409711'		
+		HCMX_TENANT_ID = '616409711'
+		EXAMPLE_CREDS = credentials('HCMXUser')
     }
 
     stages 
@@ -42,7 +43,8 @@ pipeline
 					After testing is complete, the new VM is deleted through HCMX to release resource usage on the cloud provider.
 				*/
 				
-				echo '-----------------------TESTING-----------------------'				
+				echo '-----------------------TESTING-----------------------'
+				sh('curl -X POST $HCMX_AUTH_URL -k -H "Content-Type: application/json" -d '{"login":"$EXAMPLE_CREDS_USR","password":"$EXAMPLE_CREDS_PSW"}')
 				script 
 				{
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'HCMXUser', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
