@@ -114,7 +114,7 @@ pipeline
 									{
 										// Submit a REST API call to HCMX to get status of VM deployment request
 										echo "HCMX: Get request status until it is Closed"
-										(reqResponse, reqCode) = sh(script: '''set +x;curl -s -w '\\n%{response_code}' "''' + HCMX_GET_REQUEST_STATUS_URL + '''" -k -H "Content-Type: application/json" -H "Accept: application/json" -H "Accept: text/plain" --cookie "TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN="''' + SMAX_AUTH_TOKEN + '''"" ''', returnStdout: true).trim().tokenize("\n")
+										(reqResponse, reqCode) = sh(script: '''curl -s -w '\\n%{response_code}' "''' + HCMX_GET_REQUEST_STATUS_URL + '''" -k -H "Content-Type: application/json" -H "Accept: application/json" -H "Accept: text/plain" --cookie "TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN="''' + SMAX_AUTH_TOKEN + '''"" ''', returnStdout: true).trim().tokenize("\n")
 																				
 										if (reqCode == 200) 
 										{
@@ -131,6 +131,10 @@ pipeline
 												echo "sleep for $HCMX_REQ_STATUS_CHK_INTERVAL_SECONDS seconds before checking request status again"
 												sleep(HCMX_REQ_STATUS_CHK_INTERVAL_SECONDS)
 											}                                        
+										}
+										else
+										{
+											error 'req status failed'
 										}
 									}
 									
