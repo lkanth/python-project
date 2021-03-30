@@ -45,7 +45,7 @@ pipeline
 				*/
 				
 				echo '-----------------------TESTING-----------------------'				
-				//sh(curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d '{"login": "'"$EXAMPLE_CREDS_USR"'", "password": "'"$EXAMPLE_CREDS_PSW"'"}')
+				sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login": "\'"$EXAMPLE_CREDS_USR"\'", "password": "\'"$EXAMPLE_CREDS_PSW"\'"}\'')
 				//sh("curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H \"Content-Type: application/json\" -d '{\"login\": \"$EXAMPLE_CREDS_USR\", \"password\": \"$EXAMPLE_CREDS_PSW\"}'")
 				sh('echo "This is start"')
 				sh('echo "\'"$EXAMPLE_CREDS_USR $EXAMPLE_CREDS_PSW"\'"')
