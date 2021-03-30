@@ -45,7 +45,7 @@ pipeline
 				
 				echo '-----------------------TESTING-----------------------'
 				
-				sh('curl -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -k -H "Content-Type: application/json" -d {"login":"tenantAdmin","password":"Admin_1234"}')
+				sh('curl -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -k -H "Content-Type: application/json" -d {\"login\":\"tenantAdmin\",\"password\":\"Admin_1234\"}')
 				script 
 				{
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'HCMXUser', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
