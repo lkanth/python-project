@@ -80,8 +80,8 @@ pipeline
 						
 						//sh(script: 'echo """$HCMX_AUTH_URL""" ') + echo ''
 						//sh(script: 'echo "${HCMX_AUTH_URL}"') + echo ''
-						sh(''' echo ''' + HCMX_AUTH_URL + ''' ''')
-						
+						//sh(''' echo ''' + HCMX_AUTH_URL + ''' ''') Works
+						sh(script:''' echo ''' + HCMX_AUTH_URL + ''' ''')
 						
 						
 						//sh(script: "echo ${HCMX_AUTH_URL}") echo 'https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711'
