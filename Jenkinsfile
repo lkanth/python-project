@@ -74,12 +74,13 @@ pipeline
 							// Build HCMX Get Person ID URL
 							//final String HCMX_GET_PERSON_ID_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Person?filter=(Upn=%27" + USERNAME + "%27)&layout=Id"
 							final String HCMX_GET_PERSON_ID_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Person?filter=(Upn=%27"
+							final String Part_URL = "%27)&layout=Id"
 							println HCMX_GET_PERSON_ID_URL
 							
 							// Submit a REST API call to HCMX to get Person ID
 							//final def (String personIDResponse, int personIDResCode)  = sh(script: "set +x;curl -s -w '\\n%{response_code}' \"$HCMX_GET_PERSON_ID_URL\" -k -H \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
 							
-							final def (String personIDResponse, int personIDResCode)  = sh(script: '''curl -s -w '\\n%{response_code}' "''' + HCMX_GET_PERSON_ID_URL + USERNAME +'''" -k -H "Content-Type: application/json" -H "Accept: application/json" -H "Accept: text/plain" --cookie "TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN" ''', returnStdout: true).trim().tokenize("\n")
+							final def (String personIDResponse, int personIDResCode)  = sh(script: '''curl -s -w '\\n%{response_code}' "''' + HCMX_GET_PERSON_ID_URL + USERNAME + Part_URL + '''" -k -H "Content-Type: application/json" -H "Accept: application/json" -H "Accept: text/plain" --cookie "TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN" ''', returnStdout: true).trim().tokenize("\n")
 							
 							if (personIDResCode == 200) 
 							{
@@ -241,8 +242,8 @@ pipeline
 							}
 							else
 							{
-								echo "Unable to get user ID for the user $USERNAME to submit REST API calls to HCMX... "
-								error 'Unable to get user ID for the user $USERNAME to submit REST API calls to HCMX... '
+								// echo "Unable to get user ID for the user $USERNAME to submit REST API calls to HCMX... "
+								error 'Unable to get user ID for the user to submit REST API calls to HCMX... '
 							}
 						}
 						else
