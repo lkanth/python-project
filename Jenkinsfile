@@ -75,7 +75,7 @@ pipeline
 							//final String HCMX_GET_PERSON_ID_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Person?filter=(Upn=%27" + USERNAME + "%27)&layout=Id"
 							final String HCMX_GET_PERSON_ID_URL_1 = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Person?filter=(Upn=%27"
 							final String HCMX_GET_PERSON_ID_URL_2 = "%27)&layout=Id"
-							println HCMX_GET_PERSON_ID_URL
+							
 							
 							// Submit a REST API call to HCMX to get Person ID
 							//final def (String personIDResponse, int personIDResCode)  = sh(script: "set +x;curl -s -w '\\n%{response_code}' \"$HCMX_GET_PERSON_ID_URL\" -k -H \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
