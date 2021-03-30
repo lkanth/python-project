@@ -78,9 +78,14 @@ pipeline
 						//String foo='curl -k -X POST "\'"${HCMX_AUTH_URL}"\'" -H "Content-Type: application/json" -d \'{"login": "\'"$USERNAME"\'", "password": "\'"$PASSWORD"\'"}\''
 						echo "Echo URL"
 						
+						//sh(script: 'echo """$HCMX_AUTH_URL""" ') + echo ''
 						//sh(script: 'echo "${HCMX_AUTH_URL}"') + echo ''
+						sh(''' echo ''' + HCMX_AUTH_URL + ''' ''')
+						
+						
+						
 						//sh(script: "echo ${HCMX_AUTH_URL}") echo 'https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711'
-						sh(script: 'echo """$HCMX_AUTH_URL""" ')
+						
 						
 						
 						
