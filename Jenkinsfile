@@ -10,7 +10,7 @@ pipeline
 		// HCMX will be used to provision VMs on which testing of the new build will be performed.
 		// After testing is complete, provisioned VMs are deleted so that expenses on public cloud is reduced and resource usage on private cloud is reduced.
 		HCMX_TENANT_ID = '616409711'
-		EXAMPLE_CREDS = credentials('HCMXUser')
+		
     }
 
     stages 
@@ -43,9 +43,8 @@ pipeline
 					After testing is complete, the new VM is deleted through HCMX to release resource usage on the cloud provider.
 				*/
 				
-				echo '-----------------------TESTING-----------------------'
+				echo '-----------------------TESTING-----------------------'				
 				
-				sh('curl -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -k -H "Content-Type: application/json" -d {\"login\":\"tenantAdmin\",\"password\":\"Admin_1234\"}')
 				script 
 				{
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'HCMXUser', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
@@ -57,7 +56,7 @@ pipeline
 						final String HCMX_TENANT_ID = env.HCMX_TENANT_ID
                         final String HCMX_SERVER_FQDN = env.HCMX_SERVER_FQDN
 						
-						error 'Failed to get SMAX_AUTH_TOKEN'
+						
 						echo "HCMX: Get SMAX Auth Token"
 						// HCMX REST APIs require SMAX AUTH TOKEN and TENANT ID to perform any POST, PUT and GET operations.
 						// Build HCMX Authentication Token URL
