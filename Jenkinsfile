@@ -43,6 +43,7 @@ pipeline
 				*/
 				
 				echo '-----------------------TESTING-----------------------'				
+				script 
 				{
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'HCMXUser', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
 					{
