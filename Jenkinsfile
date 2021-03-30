@@ -104,7 +104,7 @@ pipeline
 									echo "HCMX Request ID to deploy a new test server VM is $HCMX_REQUEST_ID"
 									
 									// Build HCMX Get request status URL
-									final String HCMX_GET_REQUEST_STATUS_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Request?filter=Id=" + HCMX_REQUEST_ID + "\\&layout=PhaseId"
+									final String HCMX_GET_REQUEST_STATUS_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Request?filter=(Id=%27" + HCMX_REQUEST_ID + "%27)&layout=PhaseId"
 									String reqStatus = ""
 									int reqCode = 0
 									String reqResponse = ""
