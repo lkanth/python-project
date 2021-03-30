@@ -9,7 +9,7 @@ pipeline
 		// HCMX tenant's ID that has DND capability. DND capability is required to provision and manage VMs.
 		// HCMX will be used to provision VMs on which testing of the new build will be performed.
 		// After testing is complete, provisioned VMs are deleted so that expenses on public cloud is reduced and resource usage on private cloud is reduced.
-		HCMX_TENANT_ID = '616409711'       
+		HCMX_TENANT_ID = '616409711'		
     }
 
     stages 
@@ -47,7 +47,11 @@ pipeline
 				{
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'HCMXUser', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
 					{
-                        final String HCMX_TENANT_ID = env.HCMX_TENANT_ID
+                        final int HCMX_REQ_STATUS_CHK_INTERVAL_SECONDS = 30
+						final int HCMX_SUB_CANCEL_DELAY_SECONDS = 120
+						
+						
+						final String HCMX_TENANT_ID = env.HCMX_TENANT_ID
                         final String HCMX_SERVER_FQDN = env.HCMX_SERVER_FQDN
 						
 						echo "HCMX: Get SMAX Auth Token"
@@ -101,14 +105,14 @@ pipeline
 									while (reqStatus != 'Close')
 									{
 										// Submit a REST API call to HCMX to get status of VM deployment request
+										echo "HCMX: Get request status until it is Closed"
 										(reqResponse, reqCode) = sh(script: "set +x;curl -s -w '\\n%{response_code}' $HCMX_GET_REQUEST_STATUS_URL -k -H \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\";set -x", returnStdout: true).trim().tokenize("\n")
-										echo "HTTP response status code: $reqCode"
-										
+																				
 										if (reqCode == 200) 
 										{
 											def reqResponseJSON = new groovy.json.JsonSlurperClassic().parseText(reqResponse)
 											reqStatus = reqResponseJSON.entities[0].properties.PhaseId
-											echo "HCMX REQUEST status = $reqStatus"
+											echo "HCMX REQUEST status is $reqStatus"
 											if (reqStatus.equalsIgnoreCase("Close"))
 											{
 												// If request for VM deployment has moved to Close phase, then VM has been deployed successfully.
@@ -116,12 +120,13 @@ pipeline
 											}
 											else
 											{
-												echo "sleep for 30 seconds before checking status again"
-												sleep(30)
+												echo "sleep for $HCMX_REQ_STATUS_CHK_INTERVAL_SECONDS seconds before checking request status again"
+												sleep(HCMX_REQ_STATUS_CHK_INTERVAL_SECONDS)
 											}                                        
 										}
 									}
 									
+									echo "HCMX: Get subscription ID"
 									// Build HCMX Get subscription URL using the request ID that was obtained in earlier steps.
 									final String HCMX_GET_SUBSCRIPTION_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Subscription?filter=(InitiatedByRequest=%27" + HCMX_REQUEST_ID + "%27%20and%20Status=%27Active%27)&layout=Id"
 									
@@ -131,8 +136,9 @@ pipeline
 									{
 										def subResponseJSON = new groovy.json.JsonSlurperClassic().parseText(subResponse)									
 										subID = subResponseJSON.entities[0].properties.Id
-										echo "HCMX Subscription ID = $subID" 
-							
+										echo "HCMX Subscription ID is $subID" 
+										
+										echo "HCMX: Get service instances"
 										// Prepare HCMX Get service instance URL using the subscription ID that was obtained in earlier steps.
 										final String HCMX_GET_SVCINSTANCE_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/cloud-service/getServiceInstance/" + subID
 										
@@ -144,6 +150,7 @@ pipeline
 											def svcInstTopologyArray = svcInstResponseJSON.topology
 											def ipAddress = ""
 											
+											echo "HCMX: Looping through service instances to find IP address of deployed VM"
 											// Loop through service instances. Retrieve IP address property value for the service instance with type = CI_TYPE_SERVER
 											for(def member : svcInstTopologyArray) 
 											{
@@ -173,8 +180,10 @@ pipeline
 											final String remoteCMDOutput = sh(script: "ssh -o StrictHostKeyChecking=no root@$ipAddress /tmp/build/HelloWorld.sh", returnStdout: true).trim()
 											
 											// For demo and testing only. Comment out this line in production environment.
-											sleep(120)
+											echo "sleep for $HCMX_SUB_CANCEL_DELAY_SECONDS seconds before canceling subscription to delete deployed VM for testing."
+											sleep(HCMX_SUB_CANCEL_DELAY_SECONDS)
 											
+											echo "HCMX: Canceling subscription"
 											// Cancel subscription to delete deployed virtual machines. This frees up resources on cloud provider and reduces cloud spend.
 											// Prepare HCMX cancel subscription URL using the subscription ID and the person ID that were obtained in earlier steps.
 											final String HCMX_CANCEL_SUBSCRIPTION_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ess/subscription/cancelSubscription/" + HCMX_PERSON_ID + "/" + subID
