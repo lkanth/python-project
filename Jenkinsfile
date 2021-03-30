@@ -78,7 +78,7 @@ pipeline
 							// Submit a REST API call to HCMX to get Person ID
 							//final def (String personIDResponse, int personIDResCode)  = sh(script: "set +x;curl -s -w '\\n%{response_code}' \"$HCMX_GET_PERSON_ID_URL\" -k -H \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Accept: text/plain\" --cookie \"TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN\"", returnStdout: true).trim().tokenize("\n")
 							
-							final def (String personIDResponse, int personIDResCode)  = sh(script: '''curl -s -w \'\\n%{response_code}\' https://catvmlmpoc1.ftc.hpeswlab.net/rest/616409711/ems/Person?filter=Upn=%27tenantAdmin%27&layout=Id -k -H "Content-Type: application/json" -d \'{"login":"\'"$USERNAME"\'","password":"\'"$PASSWORD"\'"}\' ''', returnStdout: true).trim().tokenize("\n")
+							final def (String personIDResponse, int personIDResCode)  = sh(script: '''curl -s -w '\\n%{response_code}' "''' + HCMX_GET_PERSON_ID_URL + '''" -k -H "Content-Type: application/json" -H "Accept: application/json" -H "Accept: text/plain" --cookie "TENANTID=$HCMX_TENANT_ID;SMAX_AUTH_TOKEN=$SMAX_AUTH_TOKEN" ''', returnStdout: true).trim().tokenize("\n")
 							
 							if (personIDResCode == 200) 
 							{
