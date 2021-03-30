@@ -44,8 +44,7 @@ pipeline
 				*/
 				
 				echo '-----------------------TESTING-----------------------'
-				echo $EXAMPLE_CREDS_USR
-				echo $EXAMPLE_CREDS_PSW
+				
 				sh('curl -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -k -H "Content-Type: application/json" -d {"login":"tenantAdmin","password":"Admin_1234"}')
 				script 
 				{
