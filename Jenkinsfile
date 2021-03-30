@@ -49,7 +49,11 @@ pipeline
 				//sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login":"tenantAdmin","password":"Admin_1234"}\'')
 				//sh("""curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H \"Content-Type: application/json\" -d '{\"login\":\"$EXAMPLE_CREDS_USR\",\"password\":\"$EXAMPLE_CREDS_PSW\"}'""")
 				//sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login":"$EXAMPLE_CREDS_USR","password":"$EXAMPLE_CREDS_PSW"}\'')
-				sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login":"'$EXAMPLE_CREDS_USR'","password":"'$EXAMPLE_CREDS_PSW'"}\'')
+				sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login": "'"${​​​​​EXAMPLE_CREDS_USR}​​​​​"'", "password": "'"$EXAMPLE_CREDS_PSW"'"}\'')
+
+    
+				//'{​​​​​ "passwordCredentials": {​​​​​ "username": "'"${​​​​​USER}​​​​​"'", "password": "'"${​​​​​PASSWORD}​​​​​"'" }​​​​​, "tenantName": "PROVIDER" }​​​​​'
+
 				script 
 				{
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'HCMXUser', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
