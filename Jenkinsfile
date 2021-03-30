@@ -77,7 +77,7 @@ pipeline
 						echo "HCMX: Get SMAX Auth Token -1 ${HCMX_AUTH_URL}"
 						//final def (String SMAX_AUTH_TOKEN, int getTokenResCode) = sh(script: 'curl -s -w \'\\n%{response_code}\' -X POST "\'"$HCMX_AUTH_URL"\'" -k -H "Content-Type: application/json" -d \'{"login":"\'"$USERNAME"\'","password":"\'"$PASSWORD"\'"}\' ', returnStdout: true).trim().tokenize("\n")
 						
-						sh('curl -k -X POST "\'"${HCMX_AUTH_URL}"\'" -H "Content-Type: application/json" -d \'{"login": "\'"$USERNAME"\'", "password": "\'"$PASSWORD"\'"}\'')
+						sh('curl -k -X POST "'"${HCMX_AUTH_URL}"'" -H "Content-Type: application/json" -d \'{"login": "\'"$USERNAME"\'", "password": "\'"$PASSWORD"\'"}\'')
 						
 						echo "SMAX auth token is $SMAX_AUTH_TOKEN Response code is $getTokenResCode"
 						error 'Failed to get SMAX_AUTH_TOKEN'
