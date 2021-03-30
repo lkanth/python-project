@@ -25,7 +25,7 @@ pipeline
 					Neither Maven nor ant is required. The HelloWorld.sh is used directly as from source as the compiled code in this example use case.
 				*/
 				
-				echo 'Building...'
+				echo '-----------------------BUILDING-----------------------'
 				sh 'mkdir build'
 				sh 'cp HelloWorld.sh build/HelloWorld.sh'
 				sh 'chmod 555 build/HelloWorld.sh'
@@ -42,7 +42,7 @@ pipeline
 					After testing is complete, the new VM is deleted through HCMX to release resource usage on the cloud provider.
 				*/
 				
-				echo 'Testing..'
+				echo '-----------------------TESTING-----------------------'
                 script 
 				{
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'HCMXUser', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
@@ -50,6 +50,7 @@ pipeline
                         final String HCMX_TENANT_ID = env.HCMX_TENANT_ID
                         final String HCMX_SERVER_FQDN = env.HCMX_SERVER_FQDN
 						
+						echo "HCMX: Get SMAX Auth Token"
 						// HCMX REST APIs require SMAX AUTH TOKEN and TENANT ID to perform any POST, PUT and GET operations.
 						// Build HCMX Authentication Token URL
                         final String HCMX_AUTH_URL = "https://" + HCMX_SERVER_FQDN + "/auth/authentication-endpoint/authenticate/token?TENANTID=" + HCMX_TENANT_ID
@@ -58,7 +59,7 @@ pipeline
 						
                         final String SMAX_AUTH_TOKEN = sh(script: "set +x;curl -d '{\"login\":\"$USERNAME\",\"password\":\"$PASSWORD\"}' -X POST $HCMX_AUTH_URL -k -H \"Content-Type: application/json\";set -x", returnStdout: true).trim()
 						
-						
+						echo "HCMX: Get person ID"
 						// Build HCMX Get Person ID URL
                         final String HCMX_GET_PERSON_ID_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ems/Person?filter=(Upn=%27" + USERNAME + "%27)&layout=Id"
 						
@@ -67,12 +68,11 @@ pipeline
 						
 						if (personIDResCode == 200) 
 						{
-							def personIDResponseJSON = new groovy.json.JsonSlurperClassic().parseText(personIDResponse)
-							echo personIDResponse
+							def personIDResponseJSON = new groovy.json.JsonSlurperClassic().parseText(personIDResponse)							
 							def HCMX_PERSON_ID = personIDResponseJSON.entities[0].properties.Id
 							echo "HCMX Requested for person ID is $HCMX_PERSON_ID"
 						
-                        
+							echo "HCMX: Submit request for a new VM for testing"
 							// Build HCMX create request URL
 							final String HCMX_CREATE_REQUEST_URL = "https://" + HCMX_SERVER_FQDN + "/rest/" + HCMX_TENANT_ID + "/ess/request/createRequest"
 							
@@ -238,7 +238,7 @@ pipeline
 					delete those test VMs after testing is complete.
 				*/
                 
-				echo 'Deploying...'
+				echo '-----------------------DEPLOYING-----------------------'
             }
         }
     }
