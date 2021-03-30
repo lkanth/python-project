@@ -10,6 +10,7 @@ pipeline
 		// HCMX will be used to provision VMs on which testing of the new build will be performed.
 		// After testing is complete, provisioned VMs are deleted so that expenses on public cloud is reduced and resource usage on private cloud is reduced.
 		HCMX_TENANT_ID = '616409711'
+		EXAMPLE_CREDS = credentials('HCMXUser')
 		
     }
 
@@ -43,7 +44,8 @@ pipeline
 					After testing is complete, the new VM is deleted through HCMX to release resource usage on the cloud provider.
 				*/
 				
-				echo '-----------------------TESTING-----------------------'				
+				echo '-----------------------TESTING-----------------------'
+				sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login":"$EXAMPLE_CREDS_USR","password":"$EXAMPLE_CREDS_PSW"}\'')
 				
 				script 
 				{
@@ -69,7 +71,7 @@ pipeline
 						
 						//sh('curl -X POST'"$HCMX_AUTH_URL" -k -H "Content-Type: application/json" -d \'{"login":"$USERNAME","password":"$PASSWORD"}\'')
 						//final String curlCommand ="curl -X POST $HCMX_AUTH_URL"
-						sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login":"$USERNAME","password":"$PASSWORD"}\'')
+						//sh('curl -k -X POST https://catvmlmpoc1.ftc.hpeswlab.net/auth/authentication-endpoint/authenticate/token?TENANTID=616409711 -H "Content-Type: application/json" -d \'{"login":"$USERNAME","password":"$PASSWORD"}\'')
 						
 						error 'Failed to get SMAX_AUTH_TOKEN'
 						if (getTokenResCode == 200)
