@@ -58,14 +58,18 @@ pipeline
 						
 						
 						echo "HCMX: Get SMAX Auth Token"
+						
 						// HCMX REST APIs require SMAX AUTH TOKEN and TENANT ID to perform any POST, PUT and GET operations.
 						// Build HCMX Authentication Token URL
                         final String HCMX_AUTH_URL = "https://" + HCMX_SERVER_FQDN + "/auth/authentication-endpoint/authenticate/token?TENANTID=" + HCMX_TENANT_ID
 						
 						// Submit a REST API call to HCMX to get SMAX_AUTH_TOKEN
 						
-                        final def (String SMAX_AUTH_TOKEN, int getTokenResCode) = sh(script: "set +x;curl -s -w '\\n%{response_code}' -X POST $HCMX_AUTH_URL -k -H \"Content-Type: application/json\" -d '{\"login\":\"$USERNAME\",\"password\":\"$PASSWORD\"}' ", returnStdout: true).trim().tokenize("\n")
+                        //final def (String SMAX_AUTH_TOKEN, int getTokenResCode) = sh(script: "set +x;curl -s -w '\\n%{response_code}' -X POST $HCMX_AUTH_URL -k -H \"Content-Type: application/json\" -d '{\"login\":\"$USERNAME\",\"password\":\"$PASSWORD\"}' ", returnStdout: true).trim().tokenize("\n")
 						
+						sh('date')
+						
+						error 'Failed to get SMAX_AUTH_TOKEN'
 						if (getTokenResCode == 200)
 						{
 						
